@@ -10,6 +10,13 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+type GoVaultEnv struct {
+	image     string
+	vaultaddr string
+	authpath  string
+	container string
+}
+
 func makePatch(obj, copyObj *corev1.Pod) ([]jsonpatch.Operation, error) {
 	origJSON, err := json.Marshal(obj)
 	if err != nil {
@@ -26,26 +33,35 @@ func makePatch(obj, copyObj *corev1.Pod) ([]jsonpatch.Operation, error) {
 	return patch, nil
 }
 
-func maybeMutate(containers []corev1.Container) {
-	for i, container := range containers {
-		insertVar := true
-		for key, value := range container.Resources.Limits {
-			if key == "nvidia.com/gpu" && value.Value() > 0 {
-				insertVar = false
-			}
-		}
-		if insertVar {
-			if container.Env == nil {
-				container.Env = []corev1.EnvVar{}
-			}
-			container.Env = append(container.Env, corev1.EnvVar{Name: "NVIDIA_VISIBLE_DEVICES", Value: "none"})
-		}
-		log.Debugf("Inserting environment variable to container:%s, %s", container.Name, container.Env)
-		containers[i] = container
+func mutable(pod *corev1.Pod) *GoVaultEnv {
+	gve := &GoVaultEnv{}
+	if pod.Annotations == nil {
+		return nil
 	}
+	if container, ok := pod.Annotations["govaultenv.io/container"]; !ok {
+		return nil
+	} else {
+		gve.container = container
+	}
+	if authpath, ok := pod.Annotations["govaultenv.io/authpath"]; !ok {
+		return nil
+	} else {
+		gve.authpath = authpath
+	}
+	correct := false
+	for _, c := range pod.Spec.Containers {
+		if c.Name == gve.container {
+			correct = true
+		}
+	}
+	if !correct {
+		log.Errorf("Can't find container to mutate: %v", gve.container)
+		return nil
+	}
+	return gve
 }
 
-func Mutate(ar *v1beta1.AdmissionReview) *v1beta1.AdmissionResponse {
+func Mutate(ar *v1beta1.AdmissionReview, gveimage, vaultaddr string) *v1beta1.AdmissionResponse {
 	var pod *corev1.Pod
 	req := ar.Request
 	log.Infof("Mutate kind:%s namespace:%s, name:%s, op:%s, userinfo:%s, uid:%s", req.Kind, req.Namespace, req.Name, req.Operation, req.UserInfo, req.UID)
@@ -59,8 +75,15 @@ func Mutate(ar *v1beta1.AdmissionReview) *v1beta1.AdmissionResponse {
 		return &v1beta1.AdmissionResponse{Result: &metav1.Status{Message: err.Error()}}
 	}
 
+	gve := mutable(pod)
+	if gve == nil {
+		return &v1beta1.AdmissionResponse{Allowed: true}
+	}
+
 	origin := pod.DeepCopy()
-	maybeMutate(pod.Spec.Containers)
+	gve.vaultaddr = vaultaddr
+	gve.image = gveimage
+	pod = insertGve(pod, gve)
 
 	patch, err := makePatch(origin, pod)
 	if err != nil {

@@ -1,12 +1,12 @@
 package webhook
 
 import (
-	"awh/mutate"
 	"context"
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"macgve/mutate"
 	"net/http"
 	"os"
 	"os/signal"
@@ -19,11 +19,13 @@ import (
 )
 
 type Server struct {
+	vaultaddr    string
+	gveimage     string
 	deserializer runtime.Decoder
 	server       *http.Server
 }
 
-func New(deserializer runtime.Decoder, port int, pair tls.Certificate) *Server {
+func New(deserializer runtime.Decoder, port int, vaultaddr, gveimage string, pair tls.Certificate) *Server {
 	srv := &Server{
 		deserializer: deserializer,
 		server: &http.Server{
@@ -34,6 +36,8 @@ func New(deserializer runtime.Decoder, port int, pair tls.Certificate) *Server {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/pods", srv.Serve)
 	srv.server.Handler = mux
+	srv.vaultaddr = vaultaddr
+	srv.gveimage = gveimage
 	return srv
 }
 
@@ -84,7 +88,7 @@ func (srv *Server) Serve(w http.ResponseWriter, r *http.Request) {
 	} else {
 		log.Infof("request: %s", r.URL.Path)
 		if r.URL.Path == "/pods" {
-			admissionResponse = mutate.Mutate(&ar)
+			admissionResponse = mutate.Mutate(&ar, srv.vaultaddr, srv.gveimage)
 		}
 	}
 

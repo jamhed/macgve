@@ -12,6 +12,8 @@ type Args struct {
 	Port         int
 	CertFile     string
 	KeyFile      string
+	VaultAddr    string
+	GveImage     string
 	Args         []string
 }
 
@@ -28,8 +30,10 @@ func env(name, def string) string {
 
 func (a *Args) Parse() *Args {
 	flag.StringVar(&a.VerboseLevel, "verbose", env("VERBOSE", "info"), "Set verbosity level")
-	flag.StringVar(&a.CertFile, "certFile", env("CERT_FILE", "cert.pem"), "Cert file path")
-	flag.StringVar(&a.KeyFile, "keyFile", env("KEY_FILE", "key.pem"), "Key file path")
+	flag.StringVar(&a.CertFile, "certFile", env("CERT_FILE", "cert.pem"), "TLS cert file path")
+	flag.StringVar(&a.KeyFile, "keyFile", env("KEY_FILE", "key.pem"), "TLS key file path")
+	flag.StringVar(&a.VaultAddr, "vaultAddr", env("VAULT_ADDR", ""), "Vault address")
+	flag.StringVar(&a.GveImage, "gveImage", env("GVE_IMAGE", ""), "Govaultenv image")
 	flag.IntVar(&a.Port, "port", 8443, "Listen port")
 	flag.Parse()
 	a.Args = flag.Args()

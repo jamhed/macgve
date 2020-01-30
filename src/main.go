@@ -1,8 +1,8 @@
 package main
 
 import (
-	"awh/app"
 	"fmt"
+	"macgve/app"
 
 	admissionregistrationv1beta1 "k8s.io/api/admissionregistration/v1beta1"
 	v1 "k8s.io/api/apps/v1"
@@ -26,7 +26,7 @@ func init() {
 }
 
 func main() {
-	fmt.Printf("Awh, version:%s commit:%s date:%s builtBy:%s\n", version, commit, date, builtBy)
+	fmt.Printf("Macgve, version:%s commit:%s date:%s builtBy:%s\n", version, commit, date, builtBy)
 	codecs := serializer.NewCodecFactory(runtimeScheme)
 	deserializer := codecs.UniversalDeserializer()
 

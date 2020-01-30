@@ -1,10 +1,10 @@
 package app
 
 import (
-	"awh/args"
-	"awh/webhook"
 	"crypto/tls"
 	"log"
+	"macgve/args"
+	"macgve/webhook"
 
 	"k8s.io/apimachinery/pkg/runtime"
 )
@@ -21,7 +21,7 @@ func New(deserializer runtime.Decoder) *App {
 	if err != nil {
 		log.Fatalf("Can't load cert and key files, cert:%s, key:%s, error:%s", a.args.CertFile, a.args.KeyFile, err)
 	}
-	a.srv = webhook.New(deserializer, a.args.Port, pair)
+	a.srv = webhook.New(deserializer, a.args.Port, a.args.VaultAddr, a.args.GveImage, pair)
 	return a
 }
 
