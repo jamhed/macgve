@@ -42,7 +42,7 @@ func makeInitContainer(gveImage string) corev1.Container {
 		Name:            "govaultenv-init",
 		Image:           gveImage,
 		ImagePullPolicy: corev1.PullIfNotPresent,
-		Command:         []string{"sh", "-c", "cp /govaultenv /vault/ && cp /ca-certificates.crt /etc/ssl/cert.pem"},
+		Command:         []string{"sh", "-c", "cp govaultenv /vault/ && cp ca-certificates.crt /etc/ssl/cert.pem"},
 		VolumeMounts: []corev1.VolumeMount{
 			{Name: "govaultenv", MountPath: "/vault"},
 			{Name: "tls-certs", MountPath: "/etc/ssl"},
