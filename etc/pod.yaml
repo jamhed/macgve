@@ -3,7 +3,6 @@ kind: Pod
 metadata:
   name: test
   annotations:
-    govaultenv.io/container: alpine
     govaultenv.io/authpath: default@k8s/auth
 spec:
   containers:
