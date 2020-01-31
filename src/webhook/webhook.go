@@ -50,7 +50,6 @@ func (srv *Server) Listen() {
 
 	log.Info("Server started")
 
-	// listening OS shutdown singal
 	signalChan := make(chan os.Signal, 1)
 	signal.Notify(signalChan, syscall.SIGINT, syscall.SIGTERM)
 	<-signalChan
