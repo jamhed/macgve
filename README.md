@@ -15,3 +15,8 @@ Pods needs to have command explicitly defined and not to rely on Dockerfile defa
 
 It relies on `govaultenv` docker image, with `govaultenv` and `ca-certificates.crt` files being present in image's
 work folder.
+
+## Chart
+
+Please see Helm [chart](https://github.com/jamhed/charts/tree/master/macgve) for deployment details,
+and [govaultenv](https://github.com/jamhed/govaultenv) repo.
