@@ -15,7 +15,7 @@ func mutateContainer(c corev1.Container, gve *GoVaultEnv) corev1.Container {
 
 func insertGve(pod *corev1.Pod, gve *GoVaultEnv) *corev1.Pod {
 	for i, c := range pod.Spec.Containers {
-		if gve.container == "*" || c.Name == gve.container {
+		if gve.IsIn(c.Name) {
 			pod.Spec.Containers[i] = mutateContainer(c, gve)
 		}
 	}

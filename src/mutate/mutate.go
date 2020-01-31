@@ -10,13 +10,6 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-type GoVaultEnv struct {
-	image     string
-	vaultaddr string
-	authpath  string
-	container string
-}
-
 func makePatch(obj, copyObj *corev1.Pod) ([]jsonpatch.Operation, error) {
 	origJSON, err := json.Marshal(obj)
 	if err != nil {
@@ -38,20 +31,19 @@ func mutable(pod *corev1.Pod) *GoVaultEnv {
 	if pod.Annotations == nil {
 		return nil
 	}
-	if container, ok := pod.Annotations["govaultenv.io/container"]; !ok {
-		gve.container = "*"
-	} else {
+	if containers, ok := pod.Annotations["govaultenv.io/containers"]; ok {
 		correct := false
-		gve.container = container
+		gve.SetContainers(containers)
 		for _, c := range pod.Spec.Containers {
-			if c.Name == gve.container {
+			if gve.IsIn(c.Name) {
 				correct = true
 			}
 		}
 		if !correct {
-			log.Errorf("Can't find specified container to mutate: %v", gve.container)
+			log.Errorf("Can't find specified container to mutate: %v", gve.containers)
 			return nil
 		}
+		log.Debugf("Containers to mutate:%s", gve.containers)
 	}
 	if authpath, ok := pod.Annotations["govaultenv.io/authpath"]; !ok {
 		return nil
