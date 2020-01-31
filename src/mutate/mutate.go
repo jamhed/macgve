@@ -61,7 +61,7 @@ func mutable(pod *corev1.Pod) *GoVaultEnv {
 	return gve
 }
 
-func Mutate(ar *v1beta1.AdmissionReview, gveimage, vaultaddr string) *v1beta1.AdmissionResponse {
+func Mutate(ar *v1beta1.AdmissionReview, vaultaddr, gveimage string) *v1beta1.AdmissionResponse {
 	var pod *corev1.Pod
 	req := ar.Request
 	log.Infof("Mutate kind:%s namespace:%s, name:%s, op:%s, userinfo:%s, uid:%s", req.Kind, req.Namespace, req.Name, req.Operation, req.UserInfo, req.UID)
