@@ -39,24 +39,24 @@ func mutable(pod *corev1.Pod) *GoVaultEnv {
 		return nil
 	}
 	if container, ok := pod.Annotations["govaultenv.io/container"]; !ok {
-		return nil
+		gve.container = "*"
 	} else {
+		correct := false
 		gve.container = container
+		for _, c := range pod.Spec.Containers {
+			if c.Name == gve.container {
+				correct = true
+			}
+		}
+		if !correct {
+			log.Errorf("Can't find specified container to mutate: %v", gve.container)
+			return nil
+		}
 	}
 	if authpath, ok := pod.Annotations["govaultenv.io/authpath"]; !ok {
 		return nil
 	} else {
 		gve.authpath = authpath
-	}
-	correct := false
-	for _, c := range pod.Spec.Containers {
-		if c.Name == gve.container {
-			correct = true
-		}
-	}
-	if !correct {
-		log.Errorf("Can't find container to mutate: %v", gve.container)
-		return nil
 	}
 	return gve
 }
