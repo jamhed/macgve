@@ -7,6 +7,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+    - name: Get current date
+      id: date
+      run: echo "::set-output name=date::$(date +'%Y%m%d%H%M%S')"
     - uses: actions/checkout@master
     - name: Publish to Registry
       uses: jerray/publish-docker-action@master
@@ -15,3 +18,4 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         auto_tag: true
+        build_args: BUILTBY=$GITHUB_ACTOR,VERSION=$GITHUB_REF,COMMIT=$GITHUB_SHA,DATE=${{steps.date.outputs.date}}
