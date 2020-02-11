@@ -39,11 +39,11 @@ func makeInitContainer(gveImage string) corev1.Container {
 		VolumeMounts:    []corev1.VolumeMount{{Name: "govaultenv", MountPath: "/vault"}},
 		Resources: corev1.ResourceRequirements{
 			Limits: corev1.ResourceList{
-				corev1.ResourceLimitsCPU:    resource.MustParse("1"),
-				corev1.ResourceLimitsMemory: resource.MustParse("500Mi")},
+				corev1.ResourceCPU:    resource.MustParse("1"),
+				corev1.ResourceMemory: resource.MustParse("500Mi")},
 			Requests: corev1.ResourceList{
-				corev1.ResourceRequestsCPU:    resource.MustParse("100m"),
-				corev1.ResourceRequestsMemory: resource.MustParse("100Mi"),
+				corev1.ResourceCPU:    resource.MustParse("100m"),
+				corev1.ResourceMemory: resource.MustParse("100Mi"),
 			},
 		},
 	}
