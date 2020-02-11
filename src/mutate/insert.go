@@ -7,7 +7,11 @@ func mutateContainer(c corev1.Container, gve *GoVaultEnv) corev1.Container {
 	c.Command = []string{"/vault/govaultenv", "-addr=" + gve.vaultaddr, "-kubeauth=" + gve.authpath, "-stripname=true"}
 	c.Args = args
 	c.VolumeMounts = append(c.VolumeMounts, corev1.VolumeMount{Name: "govaultenv", MountPath: "/vault"})
-	c.Env = append(c.Env, corev1.EnvVar{Name: "SSL_CERT_FILE", Value: "/vault/ca-certificates.crt"})
+	c.Env = append(c.Env, []corev1.EnvVar{
+		{Name: "SSL_CERT_FILE", Value: "/vault/ca-certificates.crt"},
+		{Name: "VAULT_ADDR", Value: gve.vaultaddr},
+		{Name: "KUBEAUTH", Value: gve.authpath},
+	}...)
 	return c
 }
 
