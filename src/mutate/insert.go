@@ -1,6 +1,9 @@
 package mutate
 
-import corev1 "k8s.io/api/core/v1"
+import (
+	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
+)
 
 func mutateContainer(c corev1.Container, gve *GoVaultEnv) corev1.Container {
 	args := append(c.Command, c.Args...)
@@ -34,5 +37,14 @@ func makeInitContainer(gveImage string) corev1.Container {
 		ImagePullPolicy: corev1.PullIfNotPresent,
 		Command:         []string{"sh", "-c", "cp govaultenv /vault/ && cp ca-certificates.crt /vault/ca-certificates.crt"},
 		VolumeMounts:    []corev1.VolumeMount{{Name: "govaultenv", MountPath: "/vault"}},
+		Resources: corev1.ResourceRequirements{
+			Limits: corev1.ResourceList{
+				corev1.ResourceLimitsCPU:    resource.MustParse("1"),
+				corev1.ResourceLimitsMemory: resource.MustParse("500Mi")},
+			Requests: corev1.ResourceList{
+				corev1.ResourceRequestsCPU:    resource.MustParse("100m"),
+				corev1.ResourceRequestsMemory: resource.MustParse("100Mi"),
+			},
+		},
 	}
 }
