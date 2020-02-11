@@ -40,10 +40,10 @@ func makeInitContainer(gveImage string) corev1.Container {
 		Resources: corev1.ResourceRequirements{
 			Limits: corev1.ResourceList{
 				corev1.ResourceCPU:    resource.MustParse("1"),
-				corev1.ResourceMemory: resource.MustParse("500Mi")},
+				corev1.ResourceMemory: resource.MustParse("512Mi")},
 			Requests: corev1.ResourceList{
 				corev1.ResourceCPU:    resource.MustParse("100m"),
-				corev1.ResourceMemory: resource.MustParse("100Mi"),
+				corev1.ResourceMemory: resource.MustParse("128Mi"),
 			},
 		},
 	}
