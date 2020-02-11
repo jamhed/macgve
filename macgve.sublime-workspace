@@ -4,6 +4,14 @@
 		"selected_items":
 		[
 			[
+				"c",
+				"containers\t  []string"
+			],
+			[
+				"make",
+				"makeVolume\t  func() corev1.Volume"
+			],
+			[
 				"de",
 				"deserializer\t  runtime.Decoder"
 			],
@@ -14,10 +22,6 @@
 			[
 				"ma",
 				"marshalledPatch\t  []byte"
-			],
-			[
-				"make",
-				"makePatch\t  func(obj *corev1.Pod, copyObj *corev1.Pod) ([]jsonpatch.Operation, error)"
 			],
 			[
 				"js",
@@ -84,38 +88,10 @@
 	"buffers":
 	[
 		{
-			"file": "src/go.mod",
+			"file": "src/mutate/insert.go",
 			"settings":
 			{
-				"buffer_size": 1329,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "src/webhook/webhook.go",
-			"settings":
-			{
-				"buffer_size": 2866,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"contents": "Searching 7 files for \"awh\"\n\n/Users/roman_galeev/src/private/macgve/src/main.go:\n    2  \n    3  import (\n    4: \t\"awh/app\"\n    5  \t\"fmt\"\n    6  \n    .\n   27  \n   28  func main() {\n   29: \tfmt.Printf(\"Awh, version:%s commit:%s date:%s builtBy:%s\\n\", version, commit, date, builtBy)\n   30  \tcodecs := serializer.NewCodecFactory(runtimeScheme)\n   31  \tdeserializer := codecs.UniversalDeserializer()\n\n/Users/roman_galeev/src/private/macgve/src/app/app.go:\n    2  \n    3  import (\n    4: \t\"awh/args\"\n    5: \t\"awh/webhook\"\n    6  \t\"crypto/tls\"\n    7  \t\"log\"\n\n4 matches across 2 files\n",
-			"settings":
-			{
-				"buffer_size": 578,
-				"line_ending": "Unix",
-				"name": "Find Results",
-				"scratch": true
-			}
-		},
-		{
-			"file": "src/main.go",
-			"settings":
-			{
-				"buffer_size": 915,
+				"buffer_size": 1414,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -161,8 +137,8 @@
 				"Git: Add..."
 			],
 			[
-				"git status",
-				"Git: Status"
+				"remove",
+				"Package Control: Remove Package"
 			],
 			[
 				"instal",
@@ -171,6 +147,10 @@
 			[
 				"insta",
 				"Package Control: Install Package"
+			],
+			[
+				"git status",
+				"Git: Status"
 			],
 			[
 				"inst",
@@ -235,12 +215,24 @@
 	"expanded_folders":
 	[
 		"/Users/roman_galeev/src/private/macgve/src",
+		"/Users/roman_galeev/src/private/macgve/src/app",
+		"/Users/roman_galeev/src/private/macgve/src/args",
+		"/Users/roman_galeev/src/private/macgve/src/mutate",
 		"/Users/roman_galeev/src/private/macgve/src/webhook"
 	],
 	"file_history":
 	[
-		"/Users/roman_galeev/src/private/macgve/src/app/app.go",
 		"/Users/roman_galeev/src/private/macgve/src/main.go",
+		"/Users/roman_galeev/src/private/macgve/README.md",
+		"/Users/roman_galeev/src/private/macgve/src/mutate/resources.go",
+		"/Users/roman_galeev/src/private/macgve/src/mutate/insert.go",
+		"/Users/roman_galeev/src/private/macgve/src/args/args.go",
+		"/Users/roman_galeev/src/private/macgve/src/app/app.go",
+		"/Users/roman_galeev/src/private/macgve/src/webhook/webhook.go",
+		"/Users/roman_galeev/src/private/macgve/src/mutate/gve.go",
+		"/Users/roman_galeev/src/private/macgve/src/go.mod",
+		"/Users/roman_galeev/src/private/macgve/src/mutate/mutate.go",
+		"/Users/roman_galeev/Library/Application Support/Sublime Text 3/Packages/AutoSpell/AutoSpell.sublime-settings",
 		"/Users/roman_galeev/src/private/awh/src/webhook/validate.go",
 		"/Users/roman_galeev/src/private/awh/src/webhook/mutate.go",
 		"/Users/roman_galeev/src/private/awh/src/args/args.go",
@@ -314,6 +306,8 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"makeInitCon",
+			"init",
 			"awh"
 		],
 		"highlight": true,
@@ -332,161 +326,24 @@
 	"groups":
 	[
 		{
-			"selected": 3,
+			"selected": 0,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "src/go.mod",
+					"file": "src/mutate/insert.go",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1329,
+						"buffer_size": 1414,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								13,
-								13
-							]
-						],
-						"settings":
-						{
-							"git_gutter_is_enabled": true,
-							"syntax": "Packages/Text/Plain text.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "src/webhook/webhook.go",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 2866,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								34,
-								34
-							]
-						],
-						"settings":
-						{
-							"auto_complete_triggers":
-							[
-								{
-									"characters": "<",
-									"selector": "text.html"
-								},
-								{
-									"characters": ".",
-									"selector": "source.go"
-								}
-							],
-							"git_gutter_is_enabled": true,
-							"lsp_active": true,
-							"lsp_language":
-							{
-								"gopls": "go"
-							},
-							"show_definitions": false,
-							"syntax": "Packages/Go/Go.sublime-syntax",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 578,
-						"regions":
-						{
-							"match":
-							{
-								"flags": 112,
-								"regions":
-								[
-									[
-										114,
-										117
-									],
-									[
-										200,
-										203
-									],
-									[
-										485,
-										488
-									],
-									[
-										504,
-										507
-									]
-								],
-								"scope": ""
-							}
-						},
-						"selection":
-						[
-							[
-								202,
-								202
-							]
-						],
-						"settings":
-						{
-							"default_dir": "/Users/roman_galeev/src/private/macgve/src/webhook",
-							"detect_indentation": false,
-							"git_gutter_is_enabled": false,
-							"line_numbers": false,
-							"output_tag": 1,
-							"result_base_dir": "",
-							"result_file_regex": "^([^ \t].*):$",
-							"result_line_regex": "^ +([0-9]+):",
-							"scroll_past_end": true,
-							"syntax": "Packages/Default/Find Results.hidden-tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "src/main.go",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 915,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								686,
-								686
+								445,
+								458
 							]
 						],
 						"settings":
