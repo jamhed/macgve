@@ -12,6 +12,7 @@ jobs:
         run: echo "::set-output name=date::$(date +'%Y%m%d%H%M%S')"
       - uses: actions/checkout@master
       - name: Publish to Registry
+        id: publish
         uses: jerray/publish-docker-action@master
         with:
           name: jamhed/macgwe
@@ -22,9 +23,8 @@ jobs:
       - name: Update chart appVersion
         uses: mikefarah/yq@master
         env:
-          TAG: ${{ steps.build.outputs.tag }}
+          TAG: ${{ steps.publish.outputs.tag }}
         with:
           cmd: yq -i '.appVersion=env(TAG)' charts/macgve/Chart.yaml
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
-
