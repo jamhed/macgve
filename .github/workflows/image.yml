@@ -15,15 +15,14 @@ jobs:
         id: publish
         uses: jerray/publish-docker-action@master
         with:
-          name: jamhed/macgwe
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-          auto_tag: true
           build_args: BUILTBY=${{github.actor}},VERSION=${{github.ref}},COMMIT=${{github.sha}},DATE=${{steps.date.outputs.date}}
+          tags: ${GITHUB_REF_NAME}
       - name: Update chart appVersion
         uses: mikefarah/yq@master
         env:
-          TAG: ${{ steps.publish.outputs.tag }}
+          TAG: ${GITHUB_REF_NAME}
         with:
           cmd: yq -i '.appVersion=env(TAG)' charts/macgve/Chart.yaml
       - name: Commit changes
