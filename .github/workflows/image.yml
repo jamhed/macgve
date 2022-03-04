@@ -24,11 +24,9 @@ jobs:
       - name: Update chart appVersion
         uses: mikefarah/yq@master
         with:
-          cmd: |
-            yq -i '.appVersion=env(GITHUB_REF_NAME)' charts/macgve/Chart.yaml
-            find ./
-            ls -la
-            ./bump-chart.sh charts/macgve/Chart.yaml
+          cmd: yq -i '.appVersion=env(GITHUB_REF_NAME)' charts/macgve/Chart.yaml
+      - name: Bump chart version
+        run: ./bump-chart.sh charts/macgve/Chart.yaml
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
