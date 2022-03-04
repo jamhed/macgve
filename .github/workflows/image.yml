@@ -1,0 +1,33 @@
+name: image
+on:
+  push:
+    tags:
+      - "*"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get current date
+        id: date
+        run: echo "::set-output name=date::$(date +'%Y%m%d%H%M%S')"
+      - uses: actions/checkout@master
+        with:
+          token: ${{ secrets.PAT }}
+      - name: Publish to Registry
+        id: publish
+        uses: jerray/publish-docker-action@master
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          build_args: BUILTBY=${{github.actor}},VERSION=${{github.ref}},COMMIT=${{github.sha}},DATE=${{steps.date.outputs.date}}
+          tags: ${{ env.GITHUB_REF_NAME }}
+      - name: Update chart appVersion
+        uses: mikefarah/yq@master
+        with:
+          cmd: yq -i '.appVersion=env(GITHUB_REF_NAME)' charts/macgve/Chart.yaml
+      - name: Bump chart version
+        run: ./bump-chart.sh charts/macgve/Chart.yaml
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          branch: master
