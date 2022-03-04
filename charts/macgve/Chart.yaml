@@ -3,4 +3,4 @@ name: macgve
 description: Mutating controller for govaultenv
 type: application
 version: 0.1.6
-appVersion: v0.2.11
+appVersion: v0.2.12
