@@ -31,7 +31,11 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          build-args: BUILTBY=${{github.actor}},VERSION=${{github.ref}},COMMIT=${{github.sha}},DATE=${{steps.date.outputs.date}}
+          build-args: |
+            BUILTBY=${{github.actor}}
+            VERSION=${{github.ref}}
+            COMMIT=${{github.sha}}
+            DATE=${{steps.date.outputs.date}}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
       - name: Update chart appVersion
