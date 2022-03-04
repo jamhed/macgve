@@ -27,3 +27,5 @@ jobs:
           cmd: yq -i '.appVersion=env(TAG)' charts/macgve/Chart.yaml
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          branch: master
