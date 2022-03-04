@@ -2,6 +2,16 @@ apiVersion: v1
 entries:
   macgve:
   - apiVersion: v1
+    appVersion: v0.2.17
+    created: "2022-03-04T22:24:37.626397297Z"
+    description: Mutating controller for govaultenv
+    digest: fd1a429efdea478233024f3a6e065c7e3dc9300f0d2c1e84723c3a25cd443adf
+    name: macgve
+    type: application
+    urls:
+    - https://github.com/jamhed/macgve/releases/download/macgve-0.2.15/macgve-0.2.15.tgz
+    version: 0.2.15
+  - apiVersion: v1
     appVersion: v0.2.14
     created: "2022-03-04T21:58:13.595032253Z"
     description: Mutating controller for govaultenv
@@ -21,4 +31,4 @@ entries:
     urls:
     - https://github.com/jamhed/macgve/releases/download/macgve-0.1.6/macgve-0.1.6.tgz
     version: 0.1.6
-generated: "2022-03-04T21:58:13.595041153Z"
+generated: "2022-03-04T22:24:37.626408997Z"
