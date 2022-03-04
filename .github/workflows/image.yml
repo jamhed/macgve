@@ -26,6 +26,8 @@ jobs:
         with:
           cmd: |
             yq -i '.appVersion=env(GITHUB_REF_NAME)' charts/macgve/Chart.yaml
+            find ./
+            ls -la
             ./bump-chart.sh charts/macgve/Chart.yaml
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
