@@ -38,7 +38,7 @@ spec:
         {{- end }}
         securityContext:
           {{- toYaml .Values.securityContext | nindent 12 }}
-        image: "{{ .Values.image.repository }}"
+        image: {{ include "metrics-server.image" . }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         ports:
         - containerPort: 8443
