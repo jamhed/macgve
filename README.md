@@ -6,6 +6,7 @@ Injects [govaultenv](https://github.com/jamhed/govaultenv) binary to annotated k
 
 ```sh
 helm repo add gve https://jamhed.github.io/macgve
+helm -n macgve install --create-namespace macgve gve/macgve --set macgve.vaultAddr=https://...
 ```
 
 ## How

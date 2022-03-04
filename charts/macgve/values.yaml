@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: macgve
+  repository: jamhed/macgve
   pullPolicy: IfNotPresent
 
 macgve:
