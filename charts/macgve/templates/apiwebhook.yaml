@@ -28,7 +28,7 @@ data:
   tls.key: {{ $tlsKey }}
   ca.crt:  {{ $caCrt }}
 ---
-apiVersion: admissionregistration.k8s.io/v1beta1
+apiVersion: admissionregistration.k8s.io/v1
 kind: MutatingWebhookConfiguration
 metadata:
   name: {{ template "chart.fullname" . }}
