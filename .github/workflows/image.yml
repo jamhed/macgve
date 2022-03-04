@@ -18,13 +18,11 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           build_args: BUILTBY=${{github.actor}},VERSION=${{github.ref}},COMMIT=${{github.sha}},DATE=${{steps.date.outputs.date}}
-          tags: ${GITHUB_REF_NAME}
+          tags: $GITHUB_REF_NAME
       - name: Update chart appVersion
         uses: mikefarah/yq@master
-        env:
-          TAG: ${GITHUB_REF_NAME}
         with:
-          cmd: yq -i '.appVersion=env(TAG)' charts/macgve/Chart.yaml
+          cmd: yq -i '.appVersion=env(GITHUB_REF_NAME)' charts/macgve/Chart.yaml
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
