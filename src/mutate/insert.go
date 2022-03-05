@@ -10,9 +10,6 @@ func mutateContainer(c corev1.Container, gve *GoVaultEnv) corev1.Container {
 	c.Command = []string{"/vault/govaultenv", "-addr=" + gve.vaultaddr, "-kubeauth=" + gve.authpath, "-stripname=true"}
 	c.Args = args
 	c.VolumeMounts = append(c.VolumeMounts, corev1.VolumeMount{Name: "govaultenv", MountPath: "/vault"})
-	c.Env = append(c.Env, []corev1.EnvVar{
-		{Name: "SSL_CERT_FILE", Value: "/vault/ca-certificates.crt"},
-	}...)
 	return c
 }
 
@@ -35,7 +32,7 @@ func makeInitContainer(gveImage string) corev1.Container {
 		Name:            "govaultenv-init",
 		Image:           gveImage,
 		ImagePullPolicy: corev1.PullIfNotPresent,
-		Command:         []string{"sh", "-c", "cp govaultenv /vault/ && cp ca-certificates.crt /vault/ca-certificates.crt"},
+		Command:         []string{"sh", "-c", "cp govaultenv /vault/"},
 		VolumeMounts:    []corev1.VolumeMount{{Name: "govaultenv", MountPath: "/vault"}},
 		Resources: corev1.ResourceRequirements{
 			Limits: corev1.ResourceList{
