@@ -91,7 +91,12 @@ func (srv *Server) Serve(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	admissionReview := v1.AdmissionReview{}
+	admissionReview := v1.AdmissionReview{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "admission.k8s.io/v1",
+			Kind:       "AdmissionReview",
+		},
+	}
 	if admissionResponse != nil {
 		admissionReview.Response = admissionResponse
 		if ar.Request != nil {
