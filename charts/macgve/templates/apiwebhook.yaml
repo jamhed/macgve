@@ -35,7 +35,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
 webhooks:
 - name: pods.{{ template "chart.name" . }}.argovue.io
-  admissionReviewVersions: ["v1", "v1beta1"]
+  admissionReviewVersions: ["v1"]
   sideEffects: None
   clientConfig:
     service:

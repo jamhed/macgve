@@ -13,7 +13,7 @@ import (
 	"syscall"
 
 	log "github.com/sirupsen/logrus"
-	"k8s.io/api/admission/v1beta1"
+	"k8s.io/api/admission/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 )
@@ -79,11 +79,11 @@ func (srv *Server) Serve(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var admissionResponse *v1beta1.AdmissionResponse
-	ar := v1beta1.AdmissionReview{}
+	var admissionResponse *v1.AdmissionResponse
+	ar := v1.AdmissionReview{}
 	if _, _, err := srv.deserializer.Decode(body, nil, &ar); err != nil {
 		log.Errorf("Can't decode body: %v", err)
-		admissionResponse = &v1beta1.AdmissionResponse{Result: &metav1.Status{Message: err.Error()}}
+		admissionResponse = &v1.AdmissionResponse{Result: &metav1.Status{Message: err.Error()}}
 	} else {
 		log.Infof("request: %s", r.URL.Path)
 		if r.URL.Path == "/pods" {
@@ -91,7 +91,7 @@ func (srv *Server) Serve(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	admissionReview := v1beta1.AdmissionReview{}
+	admissionReview := v1.AdmissionReview{}
 	if admissionResponse != nil {
 		admissionReview.Response = admissionResponse
 		if ar.Request != nil {
