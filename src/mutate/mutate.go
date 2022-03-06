@@ -51,6 +51,9 @@ func mutable(pod *corev1.Pod) *GoVaultEnv {
 		return gve
 	}
 	if authpath, err := getFromNamespace(pod.Namespace); err == nil {
+		if len(authpath) == 0 {
+			return nil
+		}
 		gve.authpath = strings.Join([]string{pod.Spec.ServiceAccountName, authpath}, "@")
 		return gve
 	} else {
