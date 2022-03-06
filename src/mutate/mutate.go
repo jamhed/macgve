@@ -2,10 +2,11 @@ package mutate
 
 import (
 	"encoding/json"
+	"strings"
 
 	log "github.com/sirupsen/logrus"
 	jsonpatch "gomodules.xyz/jsonpatch/v2"
-	"k8s.io/api/admission/v1"
+	v1 "k8s.io/api/admission/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -45,12 +46,17 @@ func mutable(pod *corev1.Pod) *GoVaultEnv {
 		}
 		log.Debugf("Containers to mutate:%s", gve.containers)
 	}
-	if authpath, ok := pod.Annotations["govaultenv.io/authpath"]; !ok {
-		return nil
-	} else {
-		gve.authpath = authpath
+	if authpath, ok := pod.Annotations["govaultenv.io/authpath"]; ok {
+		gve.authpath = strings.Join([]string{pod.Spec.ServiceAccountName, authpath}, "@")
+		return gve
 	}
-	return gve
+	if authpath, err := getFromNamespace(pod.Namespace); err == nil {
+		gve.authpath = strings.Join([]string{pod.Spec.ServiceAccountName, authpath}, "@")
+		return gve
+	} else {
+		log.Errorf("Error getting annotation from namespace: %v", err)
+		return nil
+	}
 }
 
 func Mutate(ar *v1.AdmissionReview, vaultaddr, gveimage string) *v1.AdmissionResponse {

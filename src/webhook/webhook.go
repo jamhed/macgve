@@ -93,7 +93,7 @@ func (srv *Server) Serve(w http.ResponseWriter, r *http.Request) {
 
 	admissionReview := v1.AdmissionReview{
 		TypeMeta: metav1.TypeMeta{
-			APIVersion: "admission.k8s.io/v1",
+			APIVersion: v1.SchemeGroupVersion.String(),
 			Kind:       "AdmissionReview",
 		},
 	}
