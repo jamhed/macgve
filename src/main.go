@@ -26,7 +26,7 @@ func init() {
 }
 
 func main() {
-	fmt.Printf("Macgve, version:%s commit:%s date:%s builtBy:%s\n", version, commit, date, builtBy)
+	fmt.Printf("macgve, version:%s commit:%s date:%s builtBy:%s\n", version, commit, date, builtBy)
 	codecs := serializer.NewCodecFactory(runtimeScheme)
 	deserializer := codecs.UniversalDeserializer()
 

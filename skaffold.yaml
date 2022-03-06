@@ -1,0 +1,22 @@
+apiVersion: skaffold/v2beta27
+kind: Config
+metadata:
+  name: dev
+build:
+  artifacts:
+    - image: jamhed/macgve
+      docker:
+        dockerfile: Dockerfile
+deploy:
+  statusCheck: false
+  helm:
+    releases:
+      - name: macgve-devel
+        chartPath: charts/macgve
+        namespace: macgve-devel
+        createNamespace: true
+        valuesFiles: [charts/macgve/values.yaml]
+        artifactOverrides:
+          image: jamhed/macgve
+        imageStrategy:
+          helm: {}
