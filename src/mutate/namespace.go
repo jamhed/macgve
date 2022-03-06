@@ -9,6 +9,9 @@ import (
 )
 
 func getFromNamespace(namespaceName string) (string, error) {
+	if len(namespaceName) == 0 {
+		return "", nil
+	}
 	config, err := rest.InClusterConfig()
 	if err != nil {
 		return "", err
