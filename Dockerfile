@@ -1,21 +1,15 @@
-ARG BUILTBY
-ARG DATE
-ARG COMMIT
-ARG VERSION
+ARG BUILTBY DATE COMMIT VERSION
 
 FROM golang:1.17-alpine AS build
-ARG BUILTBY
-ARG DATE
-ARG COMMIT
-ARG VERSION
+ARG BUILTBY DATE COMMIT VERSION
 
-WORKDIR /home
-COPY src/go.mod src/go.sum src/
-RUN cd src && go mod graph | awk '{if ($1 !~ "@") print $2}' | xargs go get -v
+WORKDIR /home/src
+COPY src/go.mod src/go.sum ./
+RUN go mod download
 
-COPY src/ src/
+COPY src/ .
 RUN --mount=type=cache,id=gobuild,target=/root/.cache/go-build \
-	cd src && go build -v -o ../macgve -ldflags \
+	go build -v -o ../macgve -ldflags \
 	"-X main.version=$VERSION -X main.commit=$COMMIT -X main.date=$DATE -X main.builtBy=$BUILTBY"
 
 FROM alpine:3
