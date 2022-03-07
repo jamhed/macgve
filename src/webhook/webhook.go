@@ -6,13 +6,15 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"macgve/mutate"
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 
-	log "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 	"k8s.io/api/admission/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -25,10 +27,22 @@ type Server struct {
 	server       *http.Server
 }
 
+type serverErrorLogWriter struct{}
+
+func (*serverErrorLogWriter) Write(p []byte) (int, error) {
+	m := string(p)
+	logrus.Error(m)
+	if strings.HasPrefix(m, "http: TLS handshake error") {
+		os.Exit(1)
+	}
+	return len(p), nil
+}
+
 func New(deserializer runtime.Decoder, port int, vaultaddr, gveimage string, pair tls.Certificate) *Server {
 	srv := &Server{
 		deserializer: deserializer,
 		server: &http.Server{
+			ErrorLog:  log.New(&serverErrorLogWriter{}, "", 0),
 			Addr:      fmt.Sprintf(":%v", port),
 			TLSConfig: &tls.Config{Certificates: []tls.Certificate{pair}},
 		},
@@ -44,17 +58,17 @@ func New(deserializer runtime.Decoder, port int, vaultaddr, gveimage string, pai
 func (srv *Server) Listen() {
 	go func() {
 		if err := srv.server.ListenAndServeTLS("", ""); err != nil {
-			log.Errorf("Failed to listen and serve webhook server: %v", err)
+			logrus.Errorf("Failed to listen and serve webhook server: %v", err)
 		}
 	}()
 
-	log.Info("Server started")
+	logrus.Info("Server started")
 
 	signalChan := make(chan os.Signal, 1)
 	signal.Notify(signalChan, syscall.SIGINT, syscall.SIGTERM)
 	<-signalChan
 
-	log.Infof("Got OS shutdown signal, shutting down webhook server gracefully...")
+	logrus.Infof("Got OS shutdown signal, shutting down webhook server gracefully...")
 	srv.server.Shutdown(context.Background())
 }
 
@@ -66,7 +80,7 @@ func (srv *Server) Serve(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	if len(body) == 0 {
-		log.Error("empty body")
+		logrus.Error("empty body")
 		http.Error(w, "empty body", http.StatusBadRequest)
 		return
 	}
@@ -74,7 +88,7 @@ func (srv *Server) Serve(w http.ResponseWriter, r *http.Request) {
 	// verify the content type is accurate
 	contentType := r.Header.Get("Content-Type")
 	if contentType != "application/json" {
-		log.Errorf("Content-Type=%s, expect application/json", contentType)
+		logrus.Errorf("Content-Type=%s, expect application/json", contentType)
 		http.Error(w, "invalid Content-Type, expect `application/json`", http.StatusUnsupportedMediaType)
 		return
 	}
@@ -82,10 +96,10 @@ func (srv *Server) Serve(w http.ResponseWriter, r *http.Request) {
 	var admissionResponse *v1.AdmissionResponse
 	ar := v1.AdmissionReview{}
 	if _, _, err := srv.deserializer.Decode(body, nil, &ar); err != nil {
-		log.Errorf("Can't decode body: %v", err)
+		logrus.Errorf("Can't decode body: %v", err)
 		admissionResponse = &v1.AdmissionResponse{Result: &metav1.Status{Message: err.Error()}}
 	} else {
-		log.Infof("request: %s", r.URL.Path)
+		logrus.Infof("request: %s", r.URL.Path)
 		if r.URL.Path == "/pods" {
 			admissionResponse = mutate.Mutate(&ar, srv.vaultaddr, srv.gveimage)
 		}
@@ -106,11 +120,11 @@ func (srv *Server) Serve(w http.ResponseWriter, r *http.Request) {
 
 	resp, err := json.Marshal(admissionReview)
 	if err != nil {
-		log.Errorf("Can't encode response: %v", err)
+		logrus.Errorf("Can't encode response: %v", err)
 		http.Error(w, fmt.Sprintf("could not encode response: %v", err), http.StatusInternalServerError)
 	}
 	if _, err := w.Write(resp); err != nil {
-		log.Errorf("Can't write response: %v", err)
+		logrus.Errorf("Can't write response: %v", err)
 		http.Error(w, fmt.Sprintf("could not write response: %v", err), http.StatusInternalServerError)
 	}
 }

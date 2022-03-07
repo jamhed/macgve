@@ -11,8 +11,18 @@ helm -n macgve install --create-namespace macgve gve/macgve --set macgve.vaultAd
 
 ## How
 
-Annotate pod with `govaultenv.io/authpath` setting value to vault authentication
-path (e.g. `default@kubernetes/cluster/namespace`), and optionally with `govaultenv.io/containers`,
-to specify comma-separated containers names in pods to apply mutations to.
+Annotate pod with `govaultenv.io/authpath` annotation with value of vault authentication
+path (e.g. `kubernetes`), and optionally with `govaultenv.io/containers`,
+with value set to  comma-separated containers names in pods to apply mutations to.
+
+It's also possible to annotate the pod's namespace with the same `govaultenv.io/authpath` annotation.
+
+`macgve` uses service account name as the vault role to use to authentifice to vault, e.g. `default`.
 
 Pods needs to have command explicitly defined and not to rely on Dockerfile default entry point.
+
+## Development
+
+```sh
+skaffold dev --status-check=false
+```
