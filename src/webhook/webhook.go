@@ -15,16 +15,17 @@ import (
 	"syscall"
 
 	"github.com/sirupsen/logrus"
-	"k8s.io/api/admission/v1"
+	v1 "k8s.io/api/admission/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 )
 
 type Server struct {
-	vaultaddr    string
-	gveimage     string
-	deserializer runtime.Decoder
-	server       *http.Server
+	vaultaddr      string
+	vaultnamespace string
+	gveimage       string
+	deserializer   runtime.Decoder
+	server         *http.Server
 }
 
 type serverErrorLogWriter struct{}
@@ -38,7 +39,7 @@ func (*serverErrorLogWriter) Write(p []byte) (int, error) {
 	return len(p), nil
 }
 
-func New(deserializer runtime.Decoder, port int, vaultaddr, gveimage string, pair tls.Certificate) *Server {
+func New(deserializer runtime.Decoder, port int, vaultaddr, vaultnamespace, gveimage string, pair tls.Certificate) *Server {
 	srv := &Server{
 		deserializer: deserializer,
 		server: &http.Server{
@@ -51,6 +52,7 @@ func New(deserializer runtime.Decoder, port int, vaultaddr, gveimage string, pai
 	mux.HandleFunc("/pods", srv.Serve)
 	srv.server.Handler = mux
 	srv.vaultaddr = vaultaddr
+	srv.vaultnamespace = vaultnamespace
 	srv.gveimage = gveimage
 	return srv
 }
@@ -101,7 +103,7 @@ func (srv *Server) Serve(w http.ResponseWriter, r *http.Request) {
 	} else {
 		logrus.Infof("request: %s", r.URL.Path)
 		if r.URL.Path == "/pods" {
-			admissionResponse = mutate.Mutate(&ar, srv.vaultaddr, srv.gveimage)
+			admissionResponse = mutate.Mutate(&ar, srv.vaultaddr, srv.vaultnamespace, srv.gveimage)
 		}
 	}
 

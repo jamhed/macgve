@@ -19,7 +19,7 @@ func insertGve(pod *corev1.Pod, gve *GoVaultEnv) *corev1.Pod {
 			pod.Spec.Containers[i] = mutateContainer(c, gve)
 		}
 	}
-	pod.Spec.InitContainers = append(pod.Spec.InitContainers, makeInitContainer(gve.image))
+	pod.Spec.InitContainers = append(pod.Spec.InitContainers, makeInitContainer(gve.image, gve.vaultnamespace))
 	pod.Spec.Volumes = append(pod.Spec.Volumes, corev1.Volume{
 		Name:         "govaultenv",
 		VolumeSource: corev1.VolumeSource{EmptyDir: &corev1.EmptyDirVolumeSource{Medium: corev1.StorageMediumMemory}},
@@ -27,13 +27,14 @@ func insertGve(pod *corev1.Pod, gve *GoVaultEnv) *corev1.Pod {
 	return pod
 }
 
-func makeInitContainer(gveImage string) corev1.Container {
-	return corev1.Container{
+func makeInitContainer(gveImage, vaultNamespace string) corev1.Container {
+	container := corev1.Container{
 		Name:            "govaultenv-init",
 		Image:           gveImage,
 		ImagePullPolicy: corev1.PullIfNotPresent,
 		Command:         []string{"sh", "-c", "cp govaultenv /vault/"},
 		VolumeMounts:    []corev1.VolumeMount{{Name: "govaultenv", MountPath: "/vault"}},
+
 		Resources: corev1.ResourceRequirements{
 			Limits: corev1.ResourceList{
 				corev1.ResourceCPU:    resource.MustParse("1"),
@@ -44,4 +45,10 @@ func makeInitContainer(gveImage string) corev1.Container {
 			},
 		},
 	}
+
+	if vaultNamespace != "" {
+		container.Env = []corev1.EnvVar{{Name: "VAULT_NAMESPACE", Value: vaultNamespace}}
+	}
+
+	return container
 }

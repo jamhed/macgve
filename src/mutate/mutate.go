@@ -62,7 +62,7 @@ func mutable(pod *corev1.Pod) *GoVaultEnv {
 	}
 }
 
-func Mutate(ar *v1.AdmissionReview, vaultaddr, gveimage string) *v1.AdmissionResponse {
+func Mutate(ar *v1.AdmissionReview, vaultaddr, vaultnamespace, gveimage string) *v1.AdmissionResponse {
 	var pod *corev1.Pod
 	req := ar.Request
 	log.Infof("Mutate kind:%s namespace:%s, name:%s, op:%s, userinfo:%s, uid:%s", req.Kind, req.Namespace, req.Name, req.Operation, req.UserInfo, req.UID)
@@ -83,6 +83,7 @@ func Mutate(ar *v1.AdmissionReview, vaultaddr, gveimage string) *v1.AdmissionRes
 
 	origin := pod.DeepCopy()
 	gve.vaultaddr = vaultaddr
+	gve.vaultnamespace = vaultnamespace
 	gve.image = gveimage
 	pod = insertGve(pod, gve)
 

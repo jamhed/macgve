@@ -3,10 +3,11 @@ package mutate
 import "strings"
 
 type GoVaultEnv struct {
-	image      string
-	vaultaddr  string
-	authpath   string
-	containers []string
+	image          string
+	vaultaddr      string
+	vaultnamespace string
+	authpath       string
+	containers     []string
 }
 
 func (gve *GoVaultEnv) IsIn(container string) bool {

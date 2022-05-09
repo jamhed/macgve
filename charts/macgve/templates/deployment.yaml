@@ -30,11 +30,12 @@ spec:
 {{- if .Values.volumes }}
 {{ toYaml .Values.volumes | indent 6 }}
 {{- end }}
+      hostNetwork: {{ include "chart.hostNetwork" . }}
       containers:
       - name: {{ .Chart.Name }}
         command: ["sh", "-c"]
         {{- with .Values.macgve }}
-        args: ["./macgve -verbose={{ .verbose }} -gveImage={{ .image }} -vaultAddr={{ .vaultAddr }} -certFile /var/serving-cert/tls.crt -keyFile /var/serving-cert/tls.key"]
+        args: ["./macgve -verbose={{ .verbose }} -gveImage={{ .image }} -vaultAddr={{ .vaultAddr }} -vaultNamespace={{ .vaultNamespace }} -certFile /var/serving-cert/tls.crt -keyFile /var/serving-cert/tls.key"]
         {{- end }}
         securityContext:
           {{- toYaml .Values.securityContext | nindent 12 }}

@@ -21,7 +21,7 @@ func New(deserializer runtime.Decoder) *App {
 	if err != nil {
 		log.Fatalf("Can't load cert and key files, cert:%s, key:%s, error:%s", a.args.CertFile, a.args.KeyFile, err)
 	}
-	a.srv = webhook.New(deserializer, a.args.Port, a.args.VaultAddr, a.args.GveImage, pair)
+	a.srv = webhook.New(deserializer, a.args.Port, a.args.VaultAddr, a.args.VaultNamespace, a.args.GveImage, pair)
 	return a
 }
 

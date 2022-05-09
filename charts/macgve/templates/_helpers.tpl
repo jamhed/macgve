@@ -39,3 +39,9 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- define "chart.image" -}}
 {{- printf "%s:%s" .Values.image.repository (default (printf "%s" .Chart.AppVersion) .Values.image.tag) }}
 {{- end }}
+
+{{- define "chart.hostNetwork" -}}
+{{- if .Values.deployment }}
+{{- default false .Values.deployment.hostNetwork }}
+{{- end }}
+{{- end }}
